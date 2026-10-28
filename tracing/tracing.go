@@ -37,7 +37,7 @@ func SetupTracing(ctx context.Context, opts ...Option) (shutdown func(context.Co
 		o(cfg)
 	}
 
-	res, err := buildResource(cfg)
+	res, err := buildResource(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("building otel resource: %w", err)
 	}
@@ -65,14 +65,17 @@ func SetupTracing(ctx context.Context, opts ...Option) (shutdown func(context.Co
 	return tp.Shutdown, nil
 }
 
-func buildResource(cfg *options) (*resource.Resource, error) {
+func buildResource(ctx context.Context, cfg *options) (*resource.Resource, error) {
 	attrs := []resource.Option{
 		resource.WithAttributes(semconv.ServiceName(cfg.serviceName)),
 	}
 	if cfg.serviceVersion != "" {
 		attrs = append(attrs, resource.WithAttributes(semconv.ServiceVersion(cfg.serviceVersion)))
 	}
-	return resource.New(context.Background(), attrs...)
+	// OTEL_SERVICE_NAME and OTEL_RESOURCE_ATTRIBUTES take precedence over the
+	// values configured in code.
+	attrs = append(attrs, resource.WithFromEnv())
+	return resource.New(ctx, attrs...)
 }
 
 func buildExporter(ctx context.Context, cfg *options) (sdktrace.SpanExporter, error) {
