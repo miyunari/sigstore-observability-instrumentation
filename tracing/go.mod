@@ -1,4 +1,4 @@
-module github.com/miyunari/sigstore-observability-instrumentation/tracing
+module github.com/securesign/sigstore-observability-instrumentation/tracing
 
 go 1.25.7
 

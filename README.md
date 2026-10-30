@@ -18,7 +18,7 @@ dependencies they use.
 ## tracing
 
 ```sh
-go get github.com/miyunari/sigstore-observability-instrumentation/tracing
+go get github.com/securesign/sigstore-observability-instrumentation/tracing
 ```
 
 ### Flags
